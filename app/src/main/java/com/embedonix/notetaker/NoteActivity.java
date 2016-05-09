@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class NoteActivity extends AppCompatActivity {
 
-    private boolean isViewingOrUpdating;
+    private boolean isViewingOrUpdating; //state of the activity
     private long mNoteCreationTime;
     private String mFileName;
     private Note mLoadedNote = null;
@@ -38,15 +38,15 @@ public class NoteActivity extends AppCompatActivity {
                 mNoteCreationTime = mLoadedNote.getDateTime();
                 isViewingOrUpdating = true;
             }
-        } else {
+        } else { //user wants to create a new note
             mNoteCreationTime = System.currentTimeMillis();
             isViewingOrUpdating = false;
         }
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        //load menu based on the state we are in (new, view/update/delete)
         if(isViewingOrUpdating) { //user is viewing or updating a note
             getMenuInflater().inflate(R.menu.menu_note_view, menu);
         } else { //user wants to create a new note
@@ -89,7 +89,8 @@ public class NoteActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_cancel: //cancel the note
-                //show cancel dialog only if user has entered a title or content
+                //TODO if is in edit/update mode, do not show dialog if user has not edited anything!!
+                //show cancel dialog only if user has entered a title or content or edited existing note
                 if(!mEtTitle.getText().toString().isEmpty() || !mEtContent.getText().toString().isEmpty()) {
                     AlertDialog.Builder dialogCancel = new AlertDialog.Builder(this)
                             .setTitle("quit without saving?")
