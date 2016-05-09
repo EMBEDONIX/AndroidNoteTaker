@@ -12,7 +12,7 @@ import android.widget.Toast;
 public class NoteActivity extends AppCompatActivity {
 
     private boolean isViewingOrUpdating;
-    private long noteCreationTime;
+    private long mNoteCreationTime;
     private String mFileName;
     private Note mLoadedNote = null;
 
@@ -35,11 +35,11 @@ public class NoteActivity extends AppCompatActivity {
                 //update the widgets from the loaded note
                 mEtTitle.setText(mLoadedNote.getTitle());
                 mEtContent.setText(mLoadedNote.getContent());
-                noteCreationTime = mLoadedNote.getDateTime();
+                mNoteCreationTime = mLoadedNote.getDateTime();
                 isViewingOrUpdating = true;
             }
         } else {
-            noteCreationTime = System.currentTimeMillis();
+            mNoteCreationTime = System.currentTimeMillis();
             isViewingOrUpdating = false;
         }
 
@@ -67,7 +67,7 @@ public class NoteActivity extends AppCompatActivity {
 
             case R.id.action_delete:
                 //ask user if he really wants to delete the note!
-                AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                AlertDialog.Builder dialogDelete = new AlertDialog.Builder(this)
                 .setTitle("delete note")
                 .setMessage("really delete the note?")
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
@@ -85,11 +85,26 @@ public class NoteActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("NO", null);
 
-                dialog.show();
+                dialogDelete.show();
                 break;
 
             case R.id.action_cancel: //cancel the note
-                finish(); //just go back :P
+                //show cancel dialog only if user has entered a title or content
+                if(!mEtTitle.getText().toString().isEmpty() || !mEtContent.getText().toString().isEmpty()) {
+                    AlertDialog.Builder dialogCancel = new AlertDialog.Builder(this)
+                            .setTitle("quit without saving?")
+                            .setMessage("are you sure you don't want to save this note?")
+                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish(); //just go back to main activity
+                                }
+                            })
+                            .setNegativeButton("NO", null);
+                    dialogCancel.show();
+                } else { //no input so do not bother to ask for confirmation
+                    finish();
+                }
                 break;
         }
 
@@ -115,9 +130,15 @@ public class NoteActivity extends AppCompatActivity {
             return;
         }
 
+        //set the creation time, if new note, now, otherwise the loaded note's creation time
+        if(mLoadedNote != null) {
+            mNoteCreationTime = mLoadedNote.getDateTime();
+        } else {
+            mNoteCreationTime = System.currentTimeMillis();
+        }
+
         //finally save the note!
-        Utilities.saveNote(this, new Note(System.currentTimeMillis(), title, content));
+        Utilities.saveNote(this, new Note(mNoteCreationTime, title, content));
         finish(); //exit the activity, should return us to MainActivity
     }
-
 }
