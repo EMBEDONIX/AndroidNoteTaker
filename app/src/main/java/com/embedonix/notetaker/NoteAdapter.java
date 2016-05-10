@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.PriorityQueue;
 
 /**
  * Created by saeid on 5/8/2016.
@@ -30,9 +29,9 @@ public class NoteAdapter extends ArrayAdapter<Note> {
         Note note = getItem(position);
 
         if(note != null) {
-            TextView title = (TextView) convertView.findViewById(R.id.tv_note_title);
-            TextView date = (TextView) convertView.findViewById(R.id.tv_note_date);
-            TextView content = (TextView) convertView.findViewById(R.id.tv_note_content_preview);
+            TextView title = (TextView) convertView.findViewById(R.id.list_note_title);
+            TextView date = (TextView) convertView.findViewById(R.id.list_note_date);
+            TextView content = (TextView) convertView.findViewById(R.id.list_note_content_preview);
 
             title.setText(note.getTitle());
             date.setText(note.getDateTimeFormatted(getContext()));
@@ -40,7 +39,7 @@ public class NoteAdapter extends ArrayAdapter<Note> {
             //if content is big...we take only the first 50 characters!
             if(note.getContent().length() > 50) {
                 content.setText(note.getContent().substring(0,50) + "...");
-            } else {
+            } else { //if less than 50 chars...leave it as is :P
                 content.setText(note.getContent());
             }
         }
