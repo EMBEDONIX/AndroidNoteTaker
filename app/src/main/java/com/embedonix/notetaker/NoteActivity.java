@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class NoteActivity extends AppCompatActivity {
 
-    private boolean isViewingOrUpdating; //state of the activity
+    private boolean mIsViewingOrUpdating; //state of the activity
     private long mNoteCreationTime;
     private String mFileName;
     private Note mLoadedNote = null;
@@ -28,7 +28,7 @@ public class NoteActivity extends AppCompatActivity {
         mEtContent = (EditText) findViewById(R.id.note_et_content);
 
         //check if view/edit note bundle is set, otherwise user wants to create new note
-        mFileName = getIntent().getStringExtra("NOTE_FILE_NAME");
+        mFileName = getIntent().getStringExtra(Utilities.EXTRAS_NOTE_FILENAME);
         if(mFileName != null && !mFileName.isEmpty() && mFileName.endsWith(".bin")) {
            mLoadedNote = Utilities.getNoteByFileName(getApplicationContext(), mFileName);
             if (mLoadedNote != null) {
@@ -36,18 +36,18 @@ public class NoteActivity extends AppCompatActivity {
                 mEtTitle.setText(mLoadedNote.getTitle());
                 mEtContent.setText(mLoadedNote.getContent());
                 mNoteCreationTime = mLoadedNote.getDateTime();
-                isViewingOrUpdating = true;
+                mIsViewingOrUpdating = true;
             }
         } else { //user wants to create a new note
             mNoteCreationTime = System.currentTimeMillis();
-            isViewingOrUpdating = false;
+            mIsViewingOrUpdating = false;
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //load menu based on the state we are in (new, view/update/delete)
-        if(isViewingOrUpdating) { //user is viewing or updating a note
+        if(mIsViewingOrUpdating) { //user is viewing or updating a note
             getMenuInflater().inflate(R.menu.menu_note_view, menu);
         } else { //user wants to create a new note
             getMenuInflater().inflate(R.menu.menu_note_add, menu);
@@ -66,8 +66,31 @@ public class NoteActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_delete:
-                //ask user if he really wants to delete the note!
-                AlertDialog.Builder dialogDelete = new AlertDialog.Builder(this)
+                actionDelete();
+                break;
+
+            case R.id.action_cancel: //cancel the note
+                actionCancel();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Back button press is same as cancel action...so should be handled in the same manner!
+     */
+    @Override
+    public void onBackPressed() {
+        actionCancel();
+    }
+
+    /**
+     * Handle delete action
+     */
+    private void actionDelete() {
+        //ask user if he really wants to delete the note!
+        AlertDialog.Builder dialogDelete = new AlertDialog.Builder(this)
                 .setTitle("delete note")
                 .setMessage("really delete the note?")
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
@@ -77,41 +100,55 @@ public class NoteActivity extends AppCompatActivity {
                             Toast.makeText(NoteActivity.this, mLoadedNote.getTitle() + " is deleted"
                                     , Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(NoteActivity.this, "can not delete " + mLoadedNote.getTitle()
+                            Toast.makeText(NoteActivity.this, "can not delete the note '" + mLoadedNote.getTitle() + "'"
                                     , Toast.LENGTH_SHORT).show();
                         }
                         finish();
                     }
                 })
-                .setNegativeButton("NO", null);
+                .setNegativeButton("NO", null); //do nothing on clicking NO button :P
 
-                dialogDelete.show();
-                break;
-
-            case R.id.action_cancel: //cancel the note
-                //TODO if is in edit/update mode, do not show dialog if user has not edited anything!!
-                //show cancel dialog only if user has entered a title or content or edited existing note
-                if(!mEtTitle.getText().toString().isEmpty() || !mEtContent.getText().toString().isEmpty()) {
-                    AlertDialog.Builder dialogCancel = new AlertDialog.Builder(this)
-                            .setTitle("quit without saving?")
-                            .setMessage("are you sure you don't want to save this note?")
-                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish(); //just go back to main activity
-                                }
-                            })
-                            .setNegativeButton("NO", null);
-                    dialogCancel.show();
-                } else { //no input so do not bother to ask for confirmation
-                    finish();
-                }
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
+        dialogDelete.show();
     }
 
+    /**
+     * Handle cancel action
+     */
+    private void actionCancel() {
+
+        if(!checkNoteAltred()) { //if note is not altered by user (user only viewed the note/or did not write anything)
+            finish(); //just exit the activity and go back to MainActivity
+        } else { //we want to remind user to decide about saving the changes or not, by showing a dialog
+            AlertDialog.Builder dialogCancel = new AlertDialog.Builder(this)
+                    .setTitle("discard changes...")
+                    .setMessage("are you sure you do not want to save changes to this note?")
+                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish(); //just go back to main activity
+                        }
+                    })
+                    .setNegativeButton("NO", null); //null = stay in the activity!
+            dialogCancel.show();
+        }
+    }
+
+    /**
+     * Check to see if a loaded note/new note has been changed by user or not
+     * @return true if note is changed, otherwise false
+     */
+    private boolean checkNoteAltred() {
+        if(mIsViewingOrUpdating) { //if in view/update mode
+            return mLoadedNote != null && (!mEtTitle.getText().toString().equalsIgnoreCase(mLoadedNote.getTitle())
+                    || !mEtContent.getText().toString().equalsIgnoreCase(mLoadedNote.getContent()));
+        } else { //if in new note mode
+            return !mEtTitle.getText().toString().isEmpty() || !mEtContent.getText().toString().isEmpty();
+        }
+    }
+
+    /**
+     * Validate the title and content and save the note and finally exit the activity and go back to MainActivity
+     */
     private void validateAndSaveNote() {
 
         //get the content of widgets to make a note object
@@ -139,7 +176,14 @@ public class NoteActivity extends AppCompatActivity {
         }
 
         //finally save the note!
-        Utilities.saveNote(this, new Note(mNoteCreationTime, title, content));
+        if(Utilities.saveNote(this, new Note(mNoteCreationTime, title, content))) { //success!
+            //tell user the note was saved!
+            Toast.makeText(this, "note has been saved", Toast.LENGTH_SHORT).show();
+        } else { //failed to save the note! but this should not really happen :P :D :|
+            Toast.makeText(this, "can not save the note. make sure you have enough space " +
+                    "on your device", Toast.LENGTH_SHORT).show();
+        }
+
         finish(); //exit the activity, should return us to MainActivity
     }
 }

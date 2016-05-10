@@ -11,6 +11,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.action_create: //run addnote activity
+            case R.id.action_create: //run NoteActivity in new note mode
                 startActivity(new Intent(this, NoteActivity.class));
                 break;
 
@@ -55,18 +57,30 @@ public class MainActivity extends AppCompatActivity {
         mListNotes.setAdapter(null);
         ArrayList<Note> notes = Utilities.getAllSavedNotes(getApplicationContext());
 
+        //sort notes from new to old
+        Collections.sort(notes, new Comparator<Note>() {
+            @Override
+            public int compare(Note lhs, Note rhs) {
+                if(lhs.getDateTime() > rhs.getDateTime()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+
         if(notes != null && notes.size() > 0) { //check if we have any notes!
             final NoteAdapter na = new NoteAdapter(this, R.layout.view_note_item, notes);
             mListNotes.setAdapter(na);
 
-            //set click listener for items in the list
+            //set click listener for items in the list, by clicking each item the note should be loaded into NoteActivity
             mListNotes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //run the NoteActivity in view/edit mode
                     String fileName = ((Note) mListNotes.getItemAtPosition(position)).getDateTime() + ".bin";
-
                     Intent viewNoteIntent = new Intent(getApplicationContext(), NoteActivity.class);
-                    viewNoteIntent.putExtra("NOTE_FILE_NAME", fileName);
+                    viewNoteIntent.putExtra(Utilities.EXTRAS_NOTE_FILENAME, fileName);
                     startActivity(viewNoteIntent);
                 }
             });
@@ -75,9 +89,5 @@ public class MainActivity extends AppCompatActivity {
                     , Toast.LENGTH_SHORT).show();
         }
     }
-
-
-
-
 
 }

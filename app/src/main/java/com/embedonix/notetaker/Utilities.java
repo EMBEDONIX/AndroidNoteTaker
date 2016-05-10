@@ -1,14 +1,10 @@
 package com.embedonix.notetaker;
 
 import android.content.Context;
-import android.provider.ContactsContract;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,11 +17,16 @@ import java.util.ArrayList;
 public class Utilities {
 
     /**
+     * String extra for a note's filename
+     */
+    public static final String EXTRAS_NOTE_FILENAME = "EXTRAS_NOTE_FILENAME";
+
+    /**
      * Save a note on private storage of the app
      * @param context Application's context
      * @param note The note to be saved
      */
-    public static void saveNote(Context context, Note note) {
+    public static boolean saveNote(Context context, Note note) {
 
         String fileName = String.valueOf(note.getDateTime()) + ".bin";
 
@@ -40,13 +41,10 @@ public class Utilities {
         } catch (IOException e) {
             e.printStackTrace();
             //tell user the note was saved!
-            Toast.makeText(context, "Can not save note!\nMake sure you have enough space on your device"
-                    , Toast.LENGTH_SHORT).show();
+            return false;
         }
 
-        //tell user the note was saved!
-        Toast.makeText(context, note.getTitle() + " has been saved successfully"
-                , Toast.LENGTH_SHORT).show();
+        return true;
     }
 
     /**

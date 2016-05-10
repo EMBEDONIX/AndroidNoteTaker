@@ -35,7 +35,7 @@ public class NoteAdapter extends ArrayAdapter<Note> {
             TextView content = (TextView) convertView.findViewById(R.id.tv_note_content_preview);
 
             title.setText(note.getTitle());
-            date.setText(note.getDateTimeFormatted());
+            date.setText(note.getDateTimeFormatted(getContext()));
 
             //if content is big...we take only the first 50 characters!
             if(note.getContent().length() > 50) {
