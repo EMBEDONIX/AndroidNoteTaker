@@ -8,13 +8,14 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
+ * This class represents a Note object
  * Created by saeid on 5/8/2016.
  */
 public class Note implements Serializable {
 
-    private long mDateTime;
-    private String mTitle;
-    private String mContent;
+    private long mDateTime; //creation time of the note
+    private String mTitle; //title of the note
+    private String mContent; //content of the note
 
     public Note(long dateInMillis, String title, String content) {
         mDateTime = dateInMillis;

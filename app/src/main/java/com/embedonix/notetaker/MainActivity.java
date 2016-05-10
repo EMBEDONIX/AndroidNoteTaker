@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     //run the NoteActivity in view/edit mode
-                    String fileName = ((Note) mListNotes.getItemAtPosition(position)).getDateTime() + ".bin";
+                    String fileName = ((Note) mListNotes.getItemAtPosition(position)).getDateTime()
+                            + Utilities.FILE_EXTENSION;
                     Intent viewNoteIntent = new Intent(getApplicationContext(), NoteActivity.class);
                     viewNoteIntent.putExtra(Utilities.EXTRAS_NOTE_FILENAME, fileName);
                     startActivity(viewNoteIntent);

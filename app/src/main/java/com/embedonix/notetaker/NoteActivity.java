@@ -29,7 +29,7 @@ public class NoteActivity extends AppCompatActivity {
 
         //check if view/edit note bundle is set, otherwise user wants to create new note
         mFileName = getIntent().getStringExtra(Utilities.EXTRAS_NOTE_FILENAME);
-        if(mFileName != null && !mFileName.isEmpty() && mFileName.endsWith(".bin")) {
+        if(mFileName != null && !mFileName.isEmpty() && mFileName.endsWith(Utilities.FILE_EXTENSION)) {
            mLoadedNote = Utilities.getNoteByFileName(getApplicationContext(), mFileName);
             if (mLoadedNote != null) {
                 //update the widgets from the loaded note

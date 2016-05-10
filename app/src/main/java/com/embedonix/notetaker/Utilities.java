@@ -20,6 +20,7 @@ public class Utilities {
      * String extra for a note's filename
      */
     public static final String EXTRAS_NOTE_FILENAME = "EXTRAS_NOTE_FILENAME";
+    public static final String FILE_EXTENSION = ".bin";
 
     /**
      * Save a note on private storage of the app
@@ -28,7 +29,7 @@ public class Utilities {
      */
     public static boolean saveNote(Context context, Note note) {
 
-        String fileName = String.valueOf(note.getDateTime()) + ".bin";
+        String fileName = String.valueOf(note.getDateTime()) + FILE_EXTENSION;
 
         FileOutputStream fos;
         ObjectOutputStream oos;
@@ -60,7 +61,7 @@ public class Utilities {
 
         //add .bin files to the noteFiles list
         for(String file : filesDir.list()) {
-            if(file.endsWith(".bin")) {
+            if(file.endsWith(FILE_EXTENSION)) {
                 noteFiles.add(file);
             }
         }
