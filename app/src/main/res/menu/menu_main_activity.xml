@@ -8,8 +8,8 @@
         android:title="create"
         android:id="@+id/action_create"
         android:icon="@android:drawable/ic_menu_add"
-        app:showAsAction="always"
         android:orderInCategory="0"
+        app:showAsAction="always"
         />
 
     <!-- SETTINGS -->
@@ -18,8 +18,8 @@
         android:id="@+id/action_settings"
         android:title="settings"
         android:icon="@android:drawable/ic_menu_manage"
-        app:showAsAction="ifRoom"
         android:orderInCategory="10"
+        app:showAsAction="ifRoom"
         />
 
 

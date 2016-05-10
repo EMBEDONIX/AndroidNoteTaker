@@ -8,8 +8,8 @@
         android:title="update"
         android:id="@+id/action_update"
         android:icon="@android:drawable/ic_menu_save"
-        app:showAsAction="always"
         android:orderInCategory="0"
+        app:showAsAction="always"
         />
 
     <!-- CANCEL THE NOTE -->
@@ -18,8 +18,8 @@
         android:id="@+id/action_cancel"
         android:title="cancel"
         android:icon="@android:drawable/ic_menu_revert"
-        app:showAsAction="ifRoom"
         android:orderInCategory="10"
+        app:showAsAction="ifRoom"
         />
 
     <!-- DELETE NOTE -->
@@ -28,8 +28,8 @@
         android:id="@+id/action_delete"
         android:title="cancel"
         android:icon="@android:drawable/ic_menu_delete"
-        app:showAsAction="always"
-        android:orderInCategory="10"
+        android:orderInCategory="20"
+        app:showAsAction="ifRoom"
         />
 
 

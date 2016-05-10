@@ -8,8 +8,8 @@
         android:title="save note"
         android:id="@+id/action_save_note"
         android:icon="@android:drawable/ic_menu_save"
-        app:showAsAction="always"
         android:orderInCategory="0"
+        app:showAsAction="always"
         />
 
     <!-- CANCEL THE NOTE -->
@@ -18,8 +18,8 @@
         android:id="@+id/action_cancel"
         android:title="cancel"
         android:icon="@android:drawable/ic_menu_revert"
-        app:showAsAction="ifRoom"
         android:orderInCategory="10"
+        app:showAsAction="ifRoom"
         />
 
 
