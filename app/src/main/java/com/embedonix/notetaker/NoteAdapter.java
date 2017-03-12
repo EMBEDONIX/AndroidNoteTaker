@@ -1,6 +1,7 @@
 package com.embedonix.notetaker;
 
 import android.content.Context;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 public class NoteAdapter extends ArrayAdapter<Note> {
 
+    public static final int WRAP_CONTENT_LENGTH = 50;
     public NoteAdapter(Context context, int resource, List<Note> objects) {
         super(context, resource, objects);
     }
@@ -36,9 +38,14 @@ public class NoteAdapter extends ArrayAdapter<Note> {
             title.setText(note.getTitle());
             date.setText(note.getDateTimeFormatted(getContext()));
 
-            //if content is big...we take only the first 50 characters!
-            if(note.getContent().length() > 50) {
-                content.setText(note.getContent().substring(0,50) + "...");
+            //correctly show preview of the content (not more than 50 char or more than one line!)
+            int toWrap = WRAP_CONTENT_LENGTH;
+            int lineBreakIndex = note.getContent().indexOf('\n');
+            if(note.getContent().length() > WRAP_CONTENT_LENGTH || lineBreakIndex < WRAP_CONTENT_LENGTH) {
+                if(lineBreakIndex < WRAP_CONTENT_LENGTH) {
+                    toWrap = lineBreakIndex;
+                }
+                content.setText(note.getContent().substring(0,toWrap) + "...");
             } else { //if less than 50 chars...leave it as is :P
                 content.setText(note.getContent());
             }
