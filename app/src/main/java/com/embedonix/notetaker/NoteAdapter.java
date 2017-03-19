@@ -41,12 +41,15 @@ public class NoteAdapter extends ArrayAdapter<Note> {
             //correctly show preview of the content (not more than 50 char or more than one line!)
             int toWrap = WRAP_CONTENT_LENGTH;
             int lineBreakIndex = note.getContent().indexOf('\n');
+            //not an elegant series of if statements...needs to be cleaned up!
             if(note.getContent().length() > WRAP_CONTENT_LENGTH || lineBreakIndex < WRAP_CONTENT_LENGTH) {
                 if(lineBreakIndex < WRAP_CONTENT_LENGTH) {
                     toWrap = lineBreakIndex;
                 }
                 if(toWrap > 0) {
                     content.setText(note.getContent().substring(0, toWrap) + "...");
+                } else {
+                    content.setText(note.getContent());
                 }
             } else { //if less than 50 chars...leave it as is :P
                 content.setText(note.getContent());
