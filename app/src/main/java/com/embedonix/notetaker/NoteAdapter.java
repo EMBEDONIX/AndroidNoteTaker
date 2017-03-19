@@ -45,7 +45,9 @@ public class NoteAdapter extends ArrayAdapter<Note> {
                 if(lineBreakIndex < WRAP_CONTENT_LENGTH) {
                     toWrap = lineBreakIndex;
                 }
-                content.setText(note.getContent().substring(0,toWrap) + "...");
+                if(toWrap > 0) {
+                    content.setText(note.getContent().substring(0, toWrap) + "...");
+                }
             } else { //if less than 50 chars...leave it as is :P
                 content.setText(note.getContent());
             }

@@ -53,7 +53,7 @@ public class Utilities {
      * @param context Application's context
      * @return ArrayList of Note
      */
-    public static ArrayList<Note> getAllSavedNotes(Context context) {
+    static ArrayList<Note> getAllSavedNotes(Context context) {
         ArrayList<Note> notes = new ArrayList<>();
 
         File filesDir = context.getFilesDir();
